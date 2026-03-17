@@ -496,6 +496,73 @@ class MCPServer {
           },
           required: ['query']
         }
+      },
+      {
+        name: 'kaiten_get_files',
+        description: 'Get list of files attached to a card',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            cardId: {
+              type: 'number',
+              description: 'Card ID'
+            }
+          },
+          required: ['cardId']
+        }
+      },
+      {
+        name: 'kaiten_download_file',
+        description: 'Download a single file from a card to temp directory',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            cardId: {
+              type: 'number',
+              description: 'Card ID'
+            },
+            fileId: {
+              type: 'number',
+              description: 'File ID to download'
+            },
+            outputDir: {
+              type: 'string',
+              description: 'Output directory (optional, defaults to /tmp/kaiten/{cardId}/)'
+            }
+          },
+          required: ['cardId', 'fileId']
+        }
+      },
+      {
+        name: 'kaiten_download_all_files',
+        description: 'Download all files from a card to temp directory',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            cardId: {
+              type: 'number',
+              description: 'Card ID'
+            },
+            outputDir: {
+              type: 'string',
+              description: 'Output directory (optional, defaults to /tmp/kaiten/{cardId}/)'
+            }
+          },
+          required: ['cardId']
+        }
+      },
+      {
+        name: 'kaiten_clean_temp',
+        description: 'Clean temporary directory for Kaiten files',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            dir: {
+              type: 'string',
+              description: 'Directory to clean (optional, /tmp/kaiten/{cardId}/ if cardId in dir path, otherwise /tmp/kaiten/)'
+            }
+          }
+        }
       }
     ];
   }
@@ -602,6 +669,22 @@ class MCPServer {
 
         case 'kaiten_search_users':
           return await sdk.findUser(args.query);
+
+        case 'kaiten_get_files':
+          return await sdk.getCardFiles(args.cardId);
+
+        case 'kaiten_download_file':
+          return await sdk.downloadFileToDisk(args.cardId, args.fileId, args.outputDir);
+
+        case 'kaiten_download_all_files':
+          return await sdk.downloadAllCardFiles(args.cardId, args.outputDir);
+
+        case 'kaiten_clean_temp':
+          let cardId = null;
+          if (args.dir && args.dir.match(/\/kaiten\/(\d+)/)) {
+            cardId = parseInt(args.dir.match(/\/kaiten\/(\d+)/)[1]);
+          }
+          return { deleted: await sdk.cleanTempDir(cardId) };
 
         default:
           throw new Error(`Unknown tool: ${toolName}`);

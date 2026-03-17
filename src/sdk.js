@@ -1,6 +1,9 @@
 import * as api from './api/index.js';
 import * as gitApi from './api/git.js';
 import { getConfig } from './utils/config.js';
+import fs from 'fs/promises';
+import path from 'path';
+import { getCardTempDir, cleanTempDir } from './utils/temp.js';
 
 export class KaitenSDK {
   constructor(config = null) {
@@ -410,6 +413,50 @@ export class KaitenSDK {
 
   async createPullRequest(cardId, title) {
     return gitApi.createPR(cardId, title);
+  }
+
+  async getCardFiles(cardId) {
+    await this._validateCardId(cardId);
+    return api.getCardFiles(cardId);
+  }
+
+  async downloadFile(cardId, fileId) {
+    await this._validateCardId(cardId);
+    return api.downloadFile(cardId, fileId);
+  }
+
+  async downloadFileToDisk(cardId, fileId, outputDir = null) {
+    await this._validateCardId(cardId);
+    const fileData = await this.downloadFile(cardId, fileId);
+    const files = await this.getCardFiles(cardId);
+    const file = files.find(f => f.id === fileId);
+    const filename = file?.name || `file-${fileId}`;
+    const dir = outputDir || getCardTempDir(cardId);
+
+    await fs.mkdir(dir, { recursive: true });
+    const filePath = path.join(dir, filename);
+    await fs.writeFile(filePath, fileData);
+
+    return { path: filePath, filename, size: fileData.length };
+  }
+
+  async downloadAllCardFiles(cardId, outputDir = null) {
+    await this._validateCardId(cardId);
+    const files = await this.getCardFiles(cardId);
+    const dir = outputDir || getCardTempDir(cardId);
+
+    await fs.mkdir(dir, { recursive: true });
+
+    const results = [];
+    for (const file of files) {
+      const result = await this.downloadFileToDisk(cardId, file.id, dir);
+      results.push({ ...result, id: file.id });
+    }
+    return results;
+  }
+
+  async cleanTempDir(cardId = null) {
+    return cleanTempDir(cardId);
   }
 }
 
