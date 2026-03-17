@@ -60,6 +60,10 @@ KAITEN_DEFAULT_SPACE_ID=12345
 # Доска по умолчанию
 # Все операции создания карточек будут использовать эту доску
 KAITEN_DEFAULT_BOARD_ID=67890
+
+# Временная директория для скачивания файлов
+# Файлы сохраняются в /tmp/kaiten/{cardId}/ по умолчанию
+KAITEN_TEMP_DIR=/tmp/kaiten
 ```
 
 **Параметры ограничения доступа (опционально):**
@@ -274,6 +278,17 @@ kaiten card-simple <id>                # Детали конкретной за�
 | `column <board_id>` | Список колонок |
 | `user [query]` | Найти пользователя |
 
+### Файлы
+| Команда | Описание |
+|---------|----------|
+| `kaiten_get_files <card_id>` | Список файлов карточки |
+| `kaiten_download_file <card_id> <file_id> [dir]` | Скачать файл в временную директорию |
+| `kaiten_download_all_files <card_id> [dir]` | Скачать все файлы карточки |
+| `kaiten_clean_temp [dir]` | Очистить временную директорию |
+
+Файлы сохраняются в `/tmp/kaiten/{cardId}/` по умолчанию. Директорию можно изменить через параметр `dir` или переменную окружения `KAITEN_TEMP_DIR`.
+
+
 ### Флаги
 | Флаг | Описание |
 |-------|----------|
@@ -345,7 +360,8 @@ src/
 │   ├── client.js     # HTTP клиент (axios)
 │   └── index.js      # Экспорт API
 └── utils/
-    └── config.js     # Загрузка конфигурации
+    ├── config.js     # Загрузка конфигурации
+    └── temp.js      # Управление временной директорией для файлов
 ```
 
 ### Конфигурация (приоритет):
@@ -620,6 +636,12 @@ sdk.getCardsWithTag('agent-safe').then(cards => {
 **Метки:**
 - `kaiten_add_tag` с параметрами `cardId, tagName` - Добавить метку
 - `kaiten_remove_tag` с параметрами `cardId, tagName` - Удалить метку
+
+**Файлы:**
+- `kaiten_get_files` с параметром `cardId` - Список файлов карточки
+- `kaiten_download_file` с параметрами `cardId, fileId, [dir]` - Скачать файл в временную директорию
+- `kaiten_download_all_files` с параметром `cardId, [dir]` - Скачать все файлы карточки
+- `kaiten_clean_temp` с параметром `[dir]` - Очистить временную директорию
 
 **Git интеграция:**
 - `kaiten_git_branch` с параметром `cardId` - Создать ветку для задачи
