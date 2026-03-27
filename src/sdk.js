@@ -458,6 +458,12 @@ export class KaitenSDK {
   async cleanTempDir(cardId = null) {
     return cleanTempDir(cardId);
   }
+
+  async getChecklists(cardId) {
+    await this._validateCardId(cardId);
+    const card = await api.getCard(cardId);
+    return card.checklists || [];
+  }
 }
 
 export function createSDK(config = null) {

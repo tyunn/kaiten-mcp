@@ -498,6 +498,20 @@ class MCPServer {
         }
       },
       {
+        name: 'kaiten_get_checklists',
+        description: 'Get checklists from a card',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            cardId: {
+              type: 'number',
+              description: 'Card ID'
+            }
+          },
+          required: ['cardId']
+        }
+      },
+      {
         name: 'kaiten_get_files',
         description: 'Get list of files attached to a card',
         inputSchema: {
@@ -669,6 +683,9 @@ class MCPServer {
 
         case 'kaiten_search_users':
           return await sdk.findUser(args.query);
+
+        case 'kaiten_get_checklists':
+          return await sdk.getChecklists(args.cardId);
 
         case 'kaiten_get_files':
           return await sdk.getCardFiles(args.cardId);
