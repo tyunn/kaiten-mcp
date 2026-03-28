@@ -512,6 +512,24 @@ class MCPServer {
         }
       },
       {
+        name: 'kaiten_create_checklist',
+        description: 'Create a checklist on a card',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            cardId: {
+              type: 'number',
+              description: 'Card ID'
+            },
+            name: {
+              type: 'string',
+              description: 'Checklist name'
+            }
+          },
+          required: ['cardId', 'name']
+        }
+      },
+      {
         name: 'kaiten_toggle_checklist_item',
         description: 'Check or uncheck a checklist item',
         inputSchema: {
@@ -756,6 +774,9 @@ class MCPServer {
 
         case 'kaiten_get_checklists':
           return await sdk.getChecklists(args.cardId);
+
+        case 'kaiten_create_checklist':
+          return await sdk.createChecklist(args.cardId, args.name);
 
         case 'kaiten_toggle_checklist_item':
           return await sdk.toggleChecklistItem(args.cardId, args.checklistId, args.itemId, args.checked);

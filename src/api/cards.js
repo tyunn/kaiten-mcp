@@ -15,6 +15,11 @@ export async function getCard(cardId) {
   return response.data;
 }
 
+export async function createChecklist(cardId, name) {
+  const response = await api.post(`/cards/${cardId}/checklists`, { name });
+  return response.data;
+}
+
 export async function createCard(data) {
   const response = await api.post('/cards', data);
   return response.data;
