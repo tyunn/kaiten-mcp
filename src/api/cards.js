@@ -120,3 +120,8 @@ export async function toggleChecklistItem(checklistId, itemId, checked) {
   });
   return response.data;
 }
+
+export async function addChecklistItem(checklistId, text) {
+  const response = await api.post(`/checklists/${checklistId}/items`, { text });
+  return response.data;
+}
