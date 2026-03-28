@@ -475,6 +475,11 @@ export class KaitenSDK {
     return api.deleteChecklist(cardId, checklistId);
   }
 
+  async updateChecklist(cardId, checklistId, data) {
+    await this._validateCardId(cardId);
+    return api.updateChecklist(cardId, checklistId, data);
+  }
+
   async toggleChecklistItem(cardId, checklistId, itemId, checked) {
     await this._validateCardId(cardId);
     return api.toggleChecklistItem(checklistId, itemId, checked);

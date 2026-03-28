@@ -25,6 +25,11 @@ export async function deleteChecklist(cardId, checklistId) {
   return response.data;
 }
 
+export async function updateChecklist(cardId, checklistId, data) {
+  const response = await api.patch(`/cards/${cardId}/checklists/${checklistId}`, data);
+  return response.data;
+}
+
 export async function createCard(data) {
   const response = await api.post('/cards', data);
   return response.data;
