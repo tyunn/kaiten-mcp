@@ -20,6 +20,11 @@ export async function createChecklist(cardId, name) {
   return response.data;
 }
 
+export async function deleteChecklist(cardId, checklistId) {
+  const response = await api.delete(`/cards/${cardId}/checklists/${checklistId}`);
+  return response.data;
+}
+
 export async function createCard(data) {
   const response = await api.post('/cards', data);
   return response.data;
