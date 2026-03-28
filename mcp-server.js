@@ -560,6 +560,28 @@ class MCPServer {
         }
       },
       {
+        name: 'kaiten_delete_checklist_item',
+        description: 'Delete an item from a checklist',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            cardId: {
+              type: 'number',
+              description: 'Card ID'
+            },
+            checklistId: {
+              type: 'number',
+              description: 'Checklist ID'
+            },
+            itemId: {
+              type: 'number',
+              description: 'Item ID to delete'
+            }
+          },
+          required: ['cardId', 'checklistId', 'itemId']
+        }
+      },
+      {
         name: 'kaiten_get_files',
         description: 'Get list of files attached to a card',
         inputSchema: {
@@ -740,6 +762,9 @@ class MCPServer {
 
         case 'kaiten_add_checklist_item':
           return await sdk.addChecklistItem(args.cardId, args.checklistId, args.text);
+
+        case 'kaiten_delete_checklist_item':
+          return await sdk.deleteChecklistItem(args.cardId, args.checklistId, args.itemId);
 
         case 'kaiten_get_files':
           return await sdk.getCardFiles(args.cardId);
