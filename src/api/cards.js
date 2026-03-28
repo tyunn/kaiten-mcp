@@ -113,3 +113,10 @@ export async function setTags(cardId, tagNames) {
   });
   return response.data;
 }
+
+export async function toggleChecklistItem(checklistId, itemId, checked) {
+  const response = await api.patch(`/checklists/${checklistId}/items/${itemId}`, {
+    checked
+  });
+  return response.data;
+}

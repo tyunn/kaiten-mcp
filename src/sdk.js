@@ -464,6 +464,11 @@ export class KaitenSDK {
     const card = await api.getCard(cardId);
     return card.checklists || [];
   }
+
+  async toggleChecklistItem(cardId, checklistId, itemId, checked) {
+    await this._validateCardId(cardId);
+    return api.toggleChecklistItem(checklistId, itemId, checked);
+  }
 }
 
 export function createSDK(config = null) {
