@@ -240,7 +240,7 @@ kaiten card-simple <id>                # Детали конкретной за�
 | `create '<json>'` | Создать карточку |
 | `update <id> '<json>'` | Обновить карточку |
 | `delete <id>` | Удалить карточку |
-| `move <id> <column_id>` | Переместить карточку |
+| `move <id> <column_id> [lane_id]` | Переместить карточку |
 | `assign <id> <user_id>` | Назначить исполнителя |
 
 ### Git интеграция
@@ -617,10 +617,10 @@ sdk.getCardsWithTag('agent-safe').then(cards => {
 - `kaiten_columns` с параметром `boardId: <id>` - Список колонок
 
 **CRUD операции:**
-- `kaiten_create_card` с параметрами `title, boardId, columnId, description` - Создать карточку
+- `kaiten_create_card` с параметрами `title, boardId, columnId, [description], [laneId]` - Создать карточку. **Рекомендуется указывать `laneId`**, иначе карточка попадёт на дефолтную lane доски.
 - `kaiten_update_card` с параметрами `cardId, data` - Обновить карточку
 - `kaiten_delete_card` с параметром `cardId` - Удалить карточку
-- `kaiten_move_card` с параметрами `cardId, columnId` - Переместить карточку
+- `kaiten_move_card` с параметрами `cardId, columnId, [laneId]` - Переместить карточку
 - `kaiten_assign_card` с параметрами `cardId, userId` - Назначить исполнителя
 
 **Дочерние карточки и комментарии:**

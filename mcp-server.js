@@ -108,7 +108,8 @@ class MCPServer {
             },
             minimal: {
               type: 'boolean',
-              description: 'Return minimal JSON format (token optimized)'
+              description: 'Return minimal JSON format (token optimized). Default false (full payload).',
+              default: false
             }
           }
         }
@@ -125,7 +126,8 @@ class MCPServer {
             },
             simple: {
               type: 'boolean',
-              description: 'Return human-readable format'
+              description: 'Return minimal JSON format (token optimized). Default true. Pass false to get the full card payload.',
+              default: true
             }
           },
           required: ['cardId']
@@ -133,7 +135,7 @@ class MCPServer {
       },
       {
         name: 'kaiten_create_card',
-        description: 'Create a new independent card on a board. Use this for creating separate tasks, not child cards/subtasks.',
+        description: 'Create a new independent card on a board. Use this for creating separate tasks, not child cards/subtasks. Если известен laneId — указывайте, иначе карточка попадёт на дефолтную lane доски, что для многих досок неверно.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -152,6 +154,10 @@ class MCPServer {
             description: {
               type: 'string',
               description: 'Card description (optional)'
+            },
+            laneId: {
+              type: 'number',
+              description: 'Lane ID внутри доски. Опционально, но рекомендуется указывать: иначе карточка попадёт на дефолтную lane доски. ID можно взять из ответа kaiten_card у существующей карточки на нужной lane.'
             }
           },
           required: ['title', 'boardId', 'columnId']
@@ -191,7 +197,7 @@ class MCPServer {
       },
       {
         name: 'kaiten_move_card',
-        description: 'Move a card to different column',
+        description: 'Move a card to different column. Если laneId не указан, карточка останется на текущей lane (или дефолтной для новой колонки).',
         inputSchema: {
           type: 'object',
           properties: {
@@ -202,6 +208,10 @@ class MCPServer {
             columnId: {
               type: 'number',
               description: 'Target column ID'
+            },
+            laneId: {
+              type: 'number',
+              description: 'Lane ID внутри колонки. Опционально.'
             }
           },
           required: ['cardId', 'columnId']
@@ -723,17 +733,18 @@ class MCPServer {
           return await sdk.getColumns(args.boardId);
 
         case 'kaiten_cards':
-          return await sdk.getCards(args.spaceId, args.boardId);
+          return await sdk.getCards(args.spaceId, args.boardId, args.minimal === true);
 
         case 'kaiten_card':
-          return await sdk.getCard(args.cardId, args.simple || true);
+          return await sdk.getCard(args.cardId, args.simple === false ? false : true);
 
         case 'kaiten_create_card':
           return await sdk.createCard({
             title: args.title,
             boardId: args.boardId,
             columnId: args.columnId,
-            description: args.description
+            description: args.description,
+            laneId: args.laneId
           });
 
         case 'kaiten_update_card':
@@ -743,7 +754,7 @@ class MCPServer {
           return await sdk.deleteCard(args.cardId);
 
         case 'kaiten_move_card':
-          return await sdk.moveToColumn(args.cardId, args.columnId);
+          return await sdk.moveToColumn(args.cardId, args.columnId, args.laneId);
 
         case 'kaiten_assign_card':
           return await sdk.assignTo(args.cardId, args.userId);

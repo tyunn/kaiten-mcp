@@ -45,14 +45,25 @@ export class KaitenSDK {
     return true;
   }
 
-  getCards(spaceId = null, boardId = null) {
+  async getCards(spaceId = null, boardId = null, minimal = false) {
     const id = spaceId || this.config.defaultSpaceId;
     this._validateSpaceId(id);
-    if (boardId) {
-      this._validateBoardId(boardId);
-      return api.getCards(id, boardId);
-    }
-    return api.getCards(id);
+    const cards = boardId
+      ? await api.getCards(id, boardId)
+      : await api.getCards(id);
+    if (!minimal) return cards;
+    return cards.map(card => ({
+      id: card.id,
+      title: card.title,
+      description: card.description,
+      board_id: card.board_id,
+      column_id: card.column_id,
+      lane_id: card.lane_id,
+      condition: card.condition,
+      tags: card.tags,
+      parents_count: card.parents_count,
+      children_count: card.children_count
+    }));
   }
 
   async getSpaces() {
@@ -91,6 +102,7 @@ export class KaitenSDK {
         description: card.description,
         board_id: card.board_id,
         column_id: card.column_id,
+        lane_id: card.lane_id,
         condition: card.condition,
         tags: card.tags,
         parents_count: card.parents_count,
