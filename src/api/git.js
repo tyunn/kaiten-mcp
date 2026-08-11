@@ -62,10 +62,10 @@ export async function pushBranch(branchName) {
 }
 
 export async function createPR(cardId, title) {
-  console.log('PR creation requires GitHub CLI or manual creation');
-  console.log(`Branch: feature/${cardId}-${title}`);
-  console.log(`Card: ${cardId}`);
-  console.log(`Title: ${title}`);
+  console.error('PR creation requires GitHub CLI or manual creation');
+  console.error(`Branch: feature/${cardId}-${title}`);
+  console.error(`Card: ${cardId}`);
+  console.error(`Title: ${title}`);
 }
 
 export async function isGitRepo() {

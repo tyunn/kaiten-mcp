@@ -26,12 +26,12 @@ function shouldLog(level) {
 function log(level, message, data) {
   if (shouldLog(level)) {
     const timestamp = new Date().toISOString();
+    // MCP stdio: stdout зарезервирован под JSON-RPC, логи идут только в stderr
     const msg = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
-    if (data !== undefined) {
-      console[level](msg, typeof data === 'string' ? data : JSON.stringify(data));
-    } else {
-      console[level](msg);
-    }
+    const line = data !== undefined
+      ? `${msg} ${typeof data === 'string' ? data : JSON.stringify(data)}`
+      : msg;
+    process.stderr.write(line + '\n');
   }
 }
 
@@ -47,7 +47,7 @@ function debugLog(message, data) {
   log('debug', message, data);
 }
 
-console.log(`MCP Server starting with log level: ${logLevel}`);
+console.error(`MCP Server starting with log level: ${logLevel}`);
 
 class MCPServer {
   constructor() {
