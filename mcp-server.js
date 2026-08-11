@@ -930,6 +930,35 @@ class MCPServer {
           result: null
         });
         process.exit(0);
+      } else if (message.method === 'ping') {
+        this.sendResponse({
+          jsonrpc: '2.0',
+          id: message.id,
+          result: {}
+        });
+      } else if (message.method === 'prompts/list') {
+        this.sendResponse({
+          jsonrpc: '2.0',
+          id: message.id,
+          result: { prompts: [] }
+        });
+      } else if (message.method === 'resources/list') {
+        this.sendResponse({
+          jsonrpc: '2.0',
+          id: message.id,
+          result: { resources: [] }
+        });
+      } else if (message.id !== undefined) {
+        // JSON-RPC: на запрос с id обязан быть ответ; молчание вешает
+        // discovery клиента (Qwen Code ждёт ~30с и рвёт соединение)
+        this.sendResponse({
+          jsonrpc: '2.0',
+          id: message.id,
+          error: {
+            code: -32601,
+            message: `Method not found: ${message.method}`
+          }
+        });
       }
     } catch (error) {
       this.sendResponse({
